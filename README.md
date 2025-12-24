@@ -45,6 +45,21 @@ python3 report_analyzer.py
 > ../report/HYDERABAD
 ```
 
+### ZIP File (Multiple Folders)
+
+```bash
+python3 report_analyzer.py
+# Then enter the ZIP file path:
+> ../report/test_reports.zip
+```
+
+**ZIP Features:**
+- Automatically extracts and processes all PDFs recursively
+- Handles duplicate filenames across different folders
+- Shows folder structure in output (e.g., `HYDERABAD/BABY OF X.pdf`)
+- **Only displays detailed reports for PDFs with abnormalities**
+- Cleans up temporary files automatically
+
 ## Output
 
 The analyzer produces:
@@ -55,45 +70,83 @@ The analyzer produces:
 4. **Validation Summary**: Total tests, normal/abnormal counts
 5. **Abnormalities Report**: Detailed breakdown of any issues found
 
-### Example Output
+### Example Output - Single PDF
 
 ```
+DETAILED REPORT: BABY OF AMMARA JAMEEL.pdf
 ================================================================================
-VALIDATION SUMMARY
-================================================================================
-Total Tests Performed: 61
-Normal Results: 61
-Abnormal Results: 0
+Total Tests: 61
+Normal: 61
+Abnormal: 0
 
-✓ ALL VALUES ARE WITHIN NORMAL RANGE
-================================================================================
-
-================================================================================
-ABNORMALITIES REPORT
-================================================================================
 ✓ No abnormalities detected. All values are within normal range.
-================================================================================
 ```
 
-If abnormalities are detected:
+### Example Output - ZIP File (All Clean)
 
 ```
+BATCH ANALYSIS SUMMARY
 ================================================================================
+Source: test_reports.zip
+Total PDFs Found: 10
+Successfully Processed: 10
+Failed: 0
+
+Reports with Abnormalities: 0
+Reports Normal: 10
+================================================================================
+
+🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉
+✓ ALL REPORTS ARE CLEAN! NO ABNORMALITIES DETECTED!
+🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉
+```
+
+### Example Output - ZIP File (With Abnormalities)
+
+```
+BATCH ANALYSIS SUMMARY
+================================================================================
+Source: reports.zip
+Total PDFs Found: 44
+Successfully Processed: 44
+Failed: 0
+
+Reports with Abnormalities: 3
+Reports Normal: 41
+================================================================================
+
+REPORTS WITH ABNORMALITIES:
+--------------------------------------------------------------------------------
+  1. HYDERABAD/BABY OF X.pdf - 2 abnormality(ies)
+  2. PAN INDIA/BABY OF Y.pdf - 1 abnormality(ies)
+  3. HYDERABAD/BABY OF Z.pdf - 5 abnormality(ies)
+================================================================================
+
+DETAILED REPORTS FOR ABNORMAL CASES
+================================================================================
+
+DETAILED REPORT: HYDERABAD/BABY OF X.pdf
+================================================================================
+
+PATIENT INFORMATION:
+NAME: BABY OF X
+AGE GENDER: 0Y 0M 5D / MALE
+...
+
+VALIDATION SUMMARY:
+Total Tests: 61
+Normal: 59
+Abnormal: 2
+
 ⚠️  ABNORMALITIES REPORT - 2 ISSUE(S) FOUND
 ================================================================================
 
 Acylcarnitine Abnormalities (2):
---------------------------------------------------------------------------------
   ⚠️  C4OH/C3DC
-      Value: 0.032 uM
+      Value: 0.75 uM
       Reference Range: 0.00 - 0.5 uM
       Issue: Above maximum (0.5)
-
-  ⚠️  C5DC
-      Value: 0.037 uM
-      Reference Range: 0.00 -0.429 uM
-      Issue: Above maximum (0.429)
-================================================================================
+  ...
 ```
 
 ## Supported Reference Range Formats
@@ -122,9 +175,13 @@ rainbow_report_verification/
 ## Notes
 
 - The tool validates **61 different test parameters** per report
-- Handles both single files and batch processing of directories
+- Supports **single PDFs, directories, and ZIP files**
+- **ZIP Mode**: Only displays detailed reports for abnormal cases (clean reports show summary only)
+- **Smart Output**: Automatically adapts based on number of files and findings
+- Handles duplicate filenames across different folders in ZIP files
 - All values are cross-checked against their specific reference ranges
 - Results are grouped by category for easy review
+- Automatic cleanup of temporary extraction files
 
 ## Troubleshooting
 
