@@ -513,10 +513,10 @@ def process_batch_pdfs(pdf_files: List[Tuple[Path, str]], show_all: bool = False
 
     for idx, (pdf_path, rel_path) in enumerate(pdf_files, 1):
         try:
-            print(f"[{idx}/{len(pdf_files)}] Processing: {rel_path}...")
+            print(f"[{idx}/{len(pdf_files)}] Processing: {rel_path}...", end=" ", flush=True)
 
             analyzer = NeonatalReportAnalyzer(str(pdf_path), rel_path)
-            analyzer.extract_text_from_pdf()
+            analyzer.extract_text_from_pdf(quiet=True)  # Quiet mode for batch processing
             analyzer.parse_patient_info()
             analyzer.parse_biochemical_parameters()
             analyzer.parse_amino_acids()
@@ -530,11 +530,11 @@ def process_batch_pdfs(pdf_files: List[Tuple[Path, str]], show_all: bool = False
             if len(analyzer.abnormalities) > 0:
                 results['abnormal'] += 1
                 results['abnormal_reports'].append(analyzer)
+                print(f"⚠️  {len(analyzer.abnormalities)} abnormality(ies) found")
             else:
                 results['normal'] += 1
                 results['normal_reports'].append(analyzer)
-
-            print(f"    ✓ Complete - {len(analyzer.abnormalities)} abnormality(ies) found")
+                print(f"✓ Normal")
 
         except Exception as e:
             results['failed'] += 1
@@ -542,7 +542,7 @@ def process_batch_pdfs(pdf_files: List[Tuple[Path, str]], show_all: bool = False
                 'path': rel_path,
                 'error': str(e)
             })
-            print(f"    ✗ Failed: {e}")
+            print(f"✗ Failed: {e}")
 
     return results
 
