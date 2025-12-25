@@ -1,0 +1,68 @@
+================================================================================
+  NEONATAL SCREENING REPORT ANALYZER - QUICK START GUIDE
+  Vijayrekha Life Sciences
+================================================================================
+
+🚀 HOW TO START THE APPLICATION:
+
+Windows Users:
+--------------
+1. Double-click "START_ANALYZER.bat"
+2. Wait for browser to open automatically
+3. That's it! The app will handle everything else.
+
+Mac/Linux Users:
+----------------
+1. Double-click "START_ANALYZER.sh"
+   (or run: ./START_ANALYZER.sh from terminal)
+2. Wait for browser to open automatically
+3. Done!
+
+
+📋 FIRST TIME SETUP (Automatic):
+---------------------------------
+On first run, the startup script will:
+✓ Check if Python is installed
+✓ Automatically install required libraries (if needed)
+✓ Open your browser
+✓ Start the application
+
+This may take 2-3 minutes on first run only.
+
+
+🏥 USING THE APPLICATION:
+-------------------------
+1. Drag and drop your PDF or ZIP file into the upload area
+2. Click "Analyze Reports" button
+3. View results and download reports
+4. Close browser when done - Press Ctrl+C in terminal to stop
+
+
+⚠️ REQUIREMENTS:
+----------------
+- Python 3.8 or higher must be installed
+- Internet connection (for first-time library installation only)
+
+
+🐛 TROUBLESHOOTING:
+------------------
+Problem: Python not found
+Solution: Install Python from https://www.python.org/
+
+Problem: Browser doesn't open
+Solution: Manually open http://localhost:8501
+
+Problem: Port already in use
+Solution: Close other Streamlit apps or restart computer
+
+
+📞 SUPPORT:
+-----------
+Vijayrekha Life Sciences™
+Email: info@vijayrekhals.co.in
+Phone: +91-4035893249
+Website: www.vijayrekhals.co.in
+
+================================================================================
+Care that never quits
+================================================================================
