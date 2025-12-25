@@ -7,6 +7,15 @@ import streamlit as st
 import tempfile
 from pathlib import Path
 import sys
+import zipfile
+import shutil
+
+# Import backend analyzer functions
+from report_analyzer import (
+    NeonatalReportAnalyzer,
+    extract_zip_file,
+    process_batch_pdfs
+)
 
 # Page configuration
 st.set_page_config(
@@ -65,22 +74,17 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Header with logo
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    # Try to display logo
-    logo_path = Path("assets/logo.png")
-    if logo_path.exists():
-        st.image(str(logo_path), width=300)
+# TODO: Logo display - working on extracting proper logo from PDF
+# logo_path = Path("assets/logo.png")
+# if logo_path.exists():
+#     st.image(str(logo_path), width=300, use_column_width=False)
 
-    st.markdown('<div class="company-name">Vijayrekha Life Sciences™</div>', unsafe_allow_html=True)
-    st.markdown('<div class="tagline">Care that never quits</div>', unsafe_allow_html=True)
-
-# Main title
+# Main title with company branding
 st.markdown("""
 <div class="main-header">
-    <h1>🏥 Neonatal Screening Report Analyzer</h1>
-    <p>Automated validation of neonatal metabolic screening reports</p>
+    <h1>🏥 Vijayrekha Life Sciences™</h1>
+    <h2>Neonatal Screening Report Analyzer</h2>
+    <p>Care that never quits | Automated validation of neonatal metabolic screening reports</p>
 </div>
 """, unsafe_allow_html=True)
 
