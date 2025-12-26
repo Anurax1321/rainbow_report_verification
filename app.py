@@ -30,38 +30,41 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for better styling
+# Custom CSS for navbar and futuristic background
 st.markdown("""
 <style>
-    .main-header {
-        text-align: center;
-        padding: 1rem 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 10px;
-        margin-bottom: 2rem;
+    /* Hide default Streamlit header */
+    header[data-testid="stHeader"] {
+        display: none;
     }
-    .company-name {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #4a5568;
-        text-align: center;
-        margin-bottom: 0.5rem;
+
+    /* Subtle futuristic background */
+    .stApp {
+        background:
+            linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%),
+            linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+        background-attachment: fixed;
     }
-    .tagline {
-        font-size: 1.2rem;
-        color: #68b984;
-        text-align: center;
-        font-style: italic;
-        margin-bottom: 2rem;
+
+    /* Content container with white background */
+    .main .block-container {
+        background-color: white;
+        padding: 0 2rem 2rem 2rem;
+        border-radius: 0;
+        box-shadow: none;
+        margin-top: 0;
+        max-width: 100%;
     }
-    .upload-section {
-        border: 2px dashed #667eea;
-        border-radius: 10px;
-        padding: 2rem;
-        text-align: center;
-        background-color: #f7fafc;
+
+    /* Navbar styling */
+    .navbar {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin: -2rem -2rem 2rem -2rem;
+        border-radius: 0;
     }
+
     .info-box {
         background-color: #e6f3ff;
         padding: 1rem;
@@ -389,36 +392,52 @@ def generate_excel_report(results):
     output.seek(0)
     return output
 
-# Logo display (commented out for now)
-# logo_path = Path("assets/logo.png")
-# if logo_path.exists():
-#     col1, col2, col3 = st.columns([1, 2, 1])
-#     with col2:
-#         st.image(str(logo_path), use_column_width=True)
-# else:
-#     st.warning("⚠️ Logo file not found at assets/logo.png")
-
-# Main title with company branding
+# Navigation Bar with gradient background
 st.markdown("""
-<div class="main-header">
-    <h1>🏥 Vijayrekha Life Sciences™</h1>
-    <h2>Neonatal Screening Report Analyzer</h2>
-    <p>Care that never quits | Automated validation of neonatal metabolic screening reports</p>
+<div class="navbar">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="flex: 1;"></div>
+        <div style="flex: 3; text-align: center;">
+            <h1 style="margin: 0; color: white; font-size: 1.8rem; font-weight: 600;">🏥 Neonatal Screening Report Analyzer</h1>
+            <p style="margin: 0.3rem 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 0.9rem;"><em>Care that never quits</em></p>
+        </div>
+        <div style="flex: 1; text-align: right; padding-right: 1rem;">
+        </div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Instructions
-st.markdown("""
-<div class="info-box">
-    <h3>📋 How to Use:</h3>
-    <ol>
-        <li><strong>Upload your file</strong> - Single PDF or ZIP file containing multiple reports</li>
-        <li><strong>Click "Analyze Reports"</strong> - The system will process and validate all test values</li>
-        <li><strong>Review results</strong> - See summary statistics and detailed abnormalities</li>
-        <li><strong>Download reports</strong> - Get professional HTML or Excel reports</li>
-    </ol>
-</div>
-""", unsafe_allow_html=True)
+# Create columns for navbar with help on right
+nav_spacer, nav_help = st.columns([10, 1])
+
+with nav_help:
+    st.markdown("<div style='margin-top: -4rem; position: relative; z-index: 1000;'></div>", unsafe_allow_html=True)
+    with st.popover("📋 Help", use_container_width=True):
+        help_tab1, help_tab2 = st.tabs(["How to Use", "About"])
+
+        with help_tab1:
+            st.markdown("""
+**How to Use:**
+1. **Upload your file** - Single PDF or ZIP file containing multiple reports
+2. **Click "Analyze Reports"** - The system will process and validate all test values
+3. **Review results** - See summary statistics and detailed abnormalities
+4. **Download reports** - Get professional HTML or Excel reports
+            """)
+
+        with help_tab2:
+            st.markdown("""
+**About:**
+
+Automated validation of neonatal metabolic screening reports.
+
+Validates 61+ test parameters including:
+- Biochemical parameters
+- Amino acids
+- Acylcarnitines
+- Molar ratios
+            """)
+
+st.markdown("<div style='padding: 0.5rem 0;'></div>", unsafe_allow_html=True)
 
 # File upload section
 st.markdown("## 📁 Upload Files")
