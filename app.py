@@ -389,14 +389,14 @@ def generate_excel_report(results):
     output.seek(0)
     return output
 
-# Logo display
-logo_path = Path("assets/logo.png")
-if logo_path.exists():
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image(str(logo_path), use_column_width=True)
-else:
-    st.warning("⚠️ Logo file not found at assets/logo.png")
+# Logo display (commented out for now)
+# logo_path = Path("assets/logo.png")
+# if logo_path.exists():
+#     col1, col2, col3 = st.columns([1, 2, 1])
+#     with col2:
+#         st.image(str(logo_path), use_column_width=True)
+# else:
+#     st.warning("⚠️ Logo file not found at assets/logo.png")
 
 # Main title with company branding
 st.markdown("""
@@ -613,99 +613,99 @@ if uploaded_file is not None:
 
                     st.session_state.results = results
 
-                except FileNotFoundError as e:
-                    st.error("❌ **File Not Found**")
+            except FileNotFoundError as e:
+                st.error("❌ **File Not Found**")
+                st.markdown("""
+                <div class="info-box">
+                    <strong>The uploaded file could not be found.</strong><br>
+                    Please try:
+                    <ul>
+                        <li>Re-uploading the file</li>
+                        <li>Clicking the Reset button and starting over</li>
+                    </ul>
+                </div>
+                """, unsafe_allow_html=True)
+                st.session_state.results = None
+
+            except zipfile.BadZipFile as e:
+                st.error("❌ **Invalid ZIP File**")
+                st.markdown("""
+                <div class="info-box">
+                    <strong>The ZIP file appears to be corrupted or invalid.</strong><br>
+                    Please ensure:
+                    <ul>
+                        <li>The file is a valid ZIP archive</li>
+                        <li>The file was completely uploaded</li>
+                        <li>The file is not password-protected</li>
+                    </ul>
+                </div>
+                """, unsafe_allow_html=True)
+                st.session_state.results = None
+
+            except PermissionError as e:
+                st.error("❌ **Permission Denied**")
+                st.markdown("""
+                <div class="info-box">
+                    <strong>Cannot access the file due to permission restrictions.</strong><br>
+                    Please:
+                    <ul>
+                        <li>Check file permissions</li>
+                        <li>Make sure the file is not open in another program</li>
+                        <li>Try uploading again</li>
+                    </ul>
+                </div>
+                """, unsafe_allow_html=True)
+                st.session_state.results = None
+
+            except Exception as e:
+                error_msg = str(e).lower()
+                st.error("❌ **Processing Error**")
+
+                # Provide context-specific error messages
+                if "pdf" in error_msg or "pdfplumber" in error_msg:
                     st.markdown("""
                     <div class="info-box">
-                        <strong>The uploaded file could not be found.</strong><br>
-                        Please try:
+                        <strong>Problem reading PDF file.</strong><br>
+                        Possible causes:
                         <ul>
-                            <li>Re-uploading the file</li>
-                            <li>Clicking the Reset button and starting over</li>
+                            <li>PDF file may be corrupted</li>
+                            <li>PDF may be password-protected</li>
+                            <li>PDF format may not be supported</li>
+                        </ul>
+                        <strong>Suggestion:</strong> Try opening the PDF in a reader to verify it's valid.
+                    </div>
+                    """, unsafe_allow_html=True)
+                elif "text" in error_msg or "extract" in error_msg:
+                    st.markdown("""
+                    <div class="info-box">
+                        <strong>Problem extracting text from PDF.</strong><br>
+                        This usually means:
+                        <ul>
+                            <li>The PDF contains only images (scanned document)</li>
+                            <li>The PDF uses an unsupported format</li>
+                        </ul>
+                        <strong>Suggestion:</strong> Ensure your PDF contains actual text, not scanned images.
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.markdown(f"""
+                    <div class="info-box">
+                        <strong>An unexpected error occurred:</strong><br>
+                        <code>{str(e)}</code><br><br>
+                        <strong>What you can do:</strong>
+                        <ul>
+                            <li>Click the Reset button and try again</li>
+                            <li>Verify your file is a valid neonatal screening report</li>
+                            <li>Try with a different file to see if the issue persists</li>
                         </ul>
                     </div>
                     """, unsafe_allow_html=True)
-                    st.session_state.results = None
 
-                except zipfile.BadZipFile as e:
-                    st.error("❌ **Invalid ZIP File**")
-                    st.markdown("""
-                    <div class="info-box">
-                        <strong>The ZIP file appears to be corrupted or invalid.</strong><br>
-                        Please ensure:
-                        <ul>
-                            <li>The file is a valid ZIP archive</li>
-                            <li>The file was completely uploaded</li>
-                            <li>The file is not password-protected</li>
-                        </ul>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.session_state.results = None
+                # Show detailed error in expander for debugging
+                with st.expander("🔍 Technical Details (for debugging)"):
+                    st.exception(e)
 
-                except PermissionError as e:
-                    st.error("❌ **Permission Denied**")
-                    st.markdown("""
-                    <div class="info-box">
-                        <strong>Cannot access the file due to permission restrictions.</strong><br>
-                        Please:
-                        <ul>
-                            <li>Check file permissions</li>
-                            <li>Make sure the file is not open in another program</li>
-                            <li>Try uploading again</li>
-                        </ul>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.session_state.results = None
-
-                except Exception as e:
-                    error_msg = str(e).lower()
-                    st.error("❌ **Processing Error**")
-
-                    # Provide context-specific error messages
-                    if "pdf" in error_msg or "pdfplumber" in error_msg:
-                        st.markdown("""
-                        <div class="info-box">
-                            <strong>Problem reading PDF file.</strong><br>
-                            Possible causes:
-                            <ul>
-                                <li>PDF file may be corrupted</li>
-                                <li>PDF may be password-protected</li>
-                                <li>PDF format may not be supported</li>
-                            </ul>
-                            <strong>Suggestion:</strong> Try opening the PDF in a reader to verify it's valid.
-                        </div>
-                        """, unsafe_allow_html=True)
-                    elif "text" in error_msg or "extract" in error_msg:
-                        st.markdown("""
-                        <div class="info-box">
-                            <strong>Problem extracting text from PDF.</strong><br>
-                            This usually means:
-                            <ul>
-                                <li>The PDF contains only images (scanned document)</li>
-                                <li>The PDF uses an unsupported format</li>
-                            </ul>
-                            <strong>Suggestion:</strong> Ensure your PDF contains actual text, not scanned images.
-                        </div>
-                        """, unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"""
-                        <div class="info-box">
-                            <strong>An unexpected error occurred:</strong><br>
-                            <code>{str(e)}</code><br><br>
-                            <strong>What you can do:</strong>
-                            <ul>
-                                <li>Click the Reset button and try again</li>
-                                <li>Verify your file is a valid neonatal screening report</li>
-                                <li>Try with a different file to see if the issue persists</li>
-                            </ul>
-                        </div>
-                        """, unsafe_allow_html=True)
-
-                    # Show detailed error in expander for debugging
-                    with st.expander("🔍 Technical Details (for debugging)"):
-                        st.exception(e)
-
-                    st.session_state.results = None
+                st.session_state.results = None
 
         # Display results if available
         if st.session_state.get('results'):
@@ -806,82 +806,82 @@ if uploaded_file is not None:
 
                 st.markdown("---")
 
-            # Visual Analytics
-            if results['total'] > 1:  # Only show charts if multiple files
-                st.markdown("### 📊 Visual Analytics")
-
-                chart_col1, chart_col2 = st.columns(2)
-
-                with chart_col1:
-                    # Pie chart: Normal vs Abnormal
-                    fig_pie = go.Figure(data=[go.Pie(
-                        labels=['Normal', 'Abnormal'],
-                        values=[results['normal'], results['abnormal']],
-                        marker=dict(colors=['#28a745', '#dc3545']),
-                        hole=0.4
-                    )])
-                    fig_pie.update_layout(
-                        title="Report Status Distribution",
-                        height=400,
-                        showlegend=True
-                    )
-                    st.plotly_chart(fig_pie, use_container_width=True)
-
-                with chart_col2:
-                    # Bar chart: Abnormality counts by category
-                    if results['abnormal_reports']:
-                        category_counts = {}
-                        for analyzer in results['abnormal_reports']:
-                            for abn in analyzer.abnormalities:
-                                cat = abn['category']
-                                category_counts[cat] = category_counts.get(cat, 0) + 1
-
-                        if category_counts:
-                            fig_bar = go.Figure(data=[go.Bar(
-                                x=list(category_counts.keys()),
-                                y=list(category_counts.values()),
-                                marker_color='#ffc107'
-                            )])
-                            fig_bar.update_layout(
-                                title="Abnormalities by Category",
-                                xaxis_title="Category",
-                                yaxis_title="Count",
-                                height=400
-                            )
-                            st.plotly_chart(fig_bar, use_container_width=True)
-                        else:
-                            st.info("No abnormalities to display")
-                    else:
-                        st.success("✅ No abnormalities detected!")
-
-                # Additional chart: Abnormalities per report
-                if results['abnormal_reports']:
-                    st.markdown("#### Abnormalities Distribution Across Reports")
-
-                    report_data = []
-                    for analyzer in results['abnormal_reports']:
-                        report_data.append({
-                            'Report': analyzer.relative_path.split('/')[-1][:30] + '...' if len(analyzer.relative_path) > 30 else analyzer.relative_path,
-                            'Abnormalities': len(analyzer.abnormalities)
-                        })
-
-                    df_reports = pd.DataFrame(report_data)
-                    fig_hist = px.bar(
-                        df_reports,
-                        x='Report',
-                        y='Abnormalities',
-                        color='Abnormalities',
-                        color_continuous_scale='Reds'
-                    )
-                    fig_hist.update_layout(
-                        xaxis_title="Report",
-                        yaxis_title="Number of Abnormalities",
-                        height=400,
-                        xaxis_tickangle=-45
-                    )
-                    st.plotly_chart(fig_hist, use_container_width=True)
-
-                st.markdown("---")
+            # Visual Analytics (commented out for now)
+            # if results['total'] > 1:  # Only show charts if multiple files
+            #     st.markdown("### 📊 Visual Analytics")
+            #
+            #     chart_col1, chart_col2 = st.columns(2)
+            #
+            #     with chart_col1:
+            #         # Pie chart: Normal vs Abnormal
+            #         fig_pie = go.Figure(data=[go.Pie(
+            #             labels=['Normal', 'Abnormal'],
+            #             values=[results['normal'], results['abnormal']],
+            #             marker=dict(colors=['#28a745', '#dc3545']),
+            #             hole=0.4
+            #         )])
+            #         fig_pie.update_layout(
+            #             title="Report Status Distribution",
+            #             height=400,
+            #             showlegend=True
+            #         )
+            #         st.plotly_chart(fig_pie, use_container_width=True)
+            #
+            #     with chart_col2:
+            #         # Bar chart: Abnormality counts by category
+            #         if results['abnormal_reports']:
+            #             category_counts = {}
+            #             for analyzer in results['abnormal_reports']:
+            #                 for abn in analyzer.abnormalities:
+            #                     cat = abn['category']
+            #                     category_counts[cat] = category_counts.get(cat, 0) + 1
+            #
+            #             if category_counts:
+            #                 fig_bar = go.Figure(data=[go.Bar(
+            #                     x=list(category_counts.keys()),
+            #                     y=list(category_counts.values()),
+            #                     marker_color='#ffc107'
+            #                 )])
+            #                 fig_bar.update_layout(
+            #                     title="Abnormalities by Category",
+            #                     xaxis_title="Category",
+            #                     yaxis_title="Count",
+            #                     height=400
+            #                 )
+            #                 st.plotly_chart(fig_bar, use_container_width=True)
+            #             else:
+            #                 st.info("No abnormalities to display")
+            #         else:
+            #             st.success("✅ No abnormalities detected!")
+            #
+            #     # Additional chart: Abnormalities per report
+            #     if results['abnormal_reports']:
+            #         st.markdown("#### Abnormalities Distribution Across Reports")
+            #
+            #         report_data = []
+            #         for analyzer in results['abnormal_reports']:
+            #             report_data.append({
+            #                 'Report': analyzer.relative_path.split('/')[-1][:30] + '...' if len(analyzer.relative_path) > 30 else analyzer.relative_path,
+            #                 'Abnormalities': len(analyzer.abnormalities)
+            #             })
+            #
+            #         df_reports = pd.DataFrame(report_data)
+            #         fig_hist = px.bar(
+            #             df_reports,
+            #             x='Report',
+            #             y='Abnormalities',
+            #             color='Abnormalities',
+            #             color_continuous_scale='Reds'
+            #         )
+            #         fig_hist.update_layout(
+            #             xaxis_title="Report",
+            #             yaxis_title="Number of Abnormalities",
+            #             height=400,
+            #             xaxis_tickangle=-45
+            #         )
+            #         st.plotly_chart(fig_hist, use_container_width=True)
+            #
+            #     st.markdown("---")
 
             # Download Options
             st.markdown("### 📥 Download Reports")
@@ -921,15 +921,6 @@ if uploaded_file is not None:
 
             st.markdown("---")
 
-            # Toggle to show all reports
-            show_all_reports = st.checkbox(
-                "📄 Show all reports (including normal ones)",
-                value=False,
-                help="Check this to view detailed reports for all processed files, not just abnormal ones"
-            )
-
-            st.markdown("---")
-
             # Overall Status
             if results['abnormal'] == 0:
                 st.success("### ✅ ALL REPORTS ARE CLEAN!")
@@ -950,17 +941,32 @@ if uploaded_file is not None:
 
                 st.markdown("---")
 
-            # Search and Filter
+            # Search and Filter (only show for multiple files)
+            search_term = ""
+            status_filter = "Abnormal Only"
+            category_filter = "All"
+
             if results['total'] > 1:
                 st.markdown("### 🔍 Search & Filter Reports")
 
                 filter_col1, filter_col2, filter_col3 = st.columns(3)
 
                 with filter_col1:
-                    search_term = st.text_input("🔎 Search by patient name or file", "", help="Enter patient name or filename to filter")
+                    st.markdown("""
+                    <style>
+                    div[data-testid="stTextInput"] > div > div > input {
+                        background-color: #f0f8ff;
+                        border: 2px solid #667eea;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-size: 16px;
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
+                    search_term = st.text_input("🔎 Search by patient name or file", "", help="Enter patient name or filename to filter", placeholder="Type to search...")
 
                 with filter_col2:
-                    status_filter = st.selectbox("📊 Filter by status", ["All", "Normal Only", "Abnormal Only"])
+                    status_filter = st.selectbox("📊 Filter by status", ["Abnormal Only", "All", "Normal Only"])
 
                 with filter_col3:
                     if results['abnormal_reports']:
@@ -979,14 +985,22 @@ if uploaded_file is not None:
             reports_to_show = []
             section_title = "### 📋 Detailed Reports"
 
-            if show_all_reports:
-                # Show all reports (both abnormal and normal)
+            # Determine which reports to show based on filter (if exists)
+            if results['total'] > 1:
+                # Use the status_filter from search section
+                if status_filter == "All":
+                    reports_to_show = results['abnormal_reports'] + results['normal_reports']
+                    section_title = f"### 📋 Detailed Reports - All {len(reports_to_show)} Report(s)"
+                elif status_filter == "Normal Only":
+                    reports_to_show = results['normal_reports']
+                    section_title = f"### 📋 Detailed Reports - Normal Reports ({len(reports_to_show)})"
+                else:  # Abnormal Only (default)
+                    reports_to_show = results['abnormal_reports']
+                    section_title = "### 📋 Detailed Reports (Abnormal Cases Only)"
+            else:
+                # Single file - show the report
                 reports_to_show = results['abnormal_reports'] + results['normal_reports']
-                section_title = f"### 📋 Detailed Reports - All {len(reports_to_show)} Report(s)"
-            elif results['abnormal'] > 0:
-                # Show only abnormal reports
-                reports_to_show = results['abnormal_reports']
-                section_title = "### 📋 Detailed Reports (Abnormal Cases Only)"
+                section_title = "### 📋 Detailed Report"
 
             # Apply filters
             if results['total'] > 1:
@@ -1031,12 +1045,11 @@ if uploaded_file is not None:
                     # Create expander title based on abnormalities
                     if len(analyzer.abnormalities) > 0:
                         expander_title = f"⚠️ {analyzer.relative_path} - {len(analyzer.abnormalities)} abnormality(ies)"
-                        is_expanded = True
                     else:
                         expander_title = f"✅ {analyzer.relative_path} - Normal"
-                        is_expanded = False
 
-                    with st.expander(expander_title, expanded=is_expanded):
+                    # All reports collapsed by default
+                    with st.expander(expander_title, expanded=False):
 
                         # Patient Information
                         st.markdown("**Patient Information:**")
@@ -1103,76 +1116,76 @@ if uploaded_file is not None:
                         else:
                             st.success("✅ All values are within normal range")
 
-            # Report Comparison Tool
-            if results['total'] > 1:
-                st.markdown("---")
-                st.markdown("### 🔄 Compare Reports Side-by-Side")
-
-                all_analyzers = results['abnormal_reports'] + results['normal_reports']
-                report_names = [f"{analyzer.relative_path} ({'⚠️ Abnormal' if len(analyzer.abnormalities) > 0 else '✅ Normal'})"
-                               for analyzer in all_analyzers]
-
-                if len(all_analyzers) >= 2:
-                    st.markdown("Select 2-3 reports to compare:")
-
-                    comparison_col1, comparison_col2, comparison_col3 = st.columns(3)
-
-                    with comparison_col1:
-                        report1_idx = st.selectbox("Report 1", range(len(report_names)), format_func=lambda x: report_names[x], key="compare_1")
-
-                    with comparison_col2:
-                        available_for_2 = [i for i in range(len(report_names)) if i != report1_idx]
-                        report2_idx = st.selectbox("Report 2", available_for_2, format_func=lambda x: report_names[x], key="compare_2")
-
-                    with comparison_col3:
-                        available_for_3 = [i for i in range(len(report_names)) if i not in [report1_idx, report2_idx]]
-                        if available_for_3:
-                            report3_idx = st.selectbox("Report 3 (Optional)", [None] + available_for_3,
-                                                      format_func=lambda x: "None" if x is None else report_names[x], key="compare_3")
-                        else:
-                            report3_idx = None
-
-                    if st.button("📊 Compare Selected Reports", use_container_width=True):
-                        st.markdown("#### Comparison Results")
-
-                        selected_analyzers = [all_analyzers[report1_idx], all_analyzers[report2_idx]]
-                        if report3_idx is not None:
-                            selected_analyzers.append(all_analyzers[report3_idx])
-
-                        # Create comparison table
-                        cols = st.columns(len(selected_analyzers))
-
-                        for idx, analyzer in enumerate(selected_analyzers):
-                            with cols[idx]:
-                                st.markdown(f"**{analyzer.relative_path}**")
-
-                                # Patient info
-                                st.markdown("---")
-                                if 'name' in analyzer.patient_info:
-                                    st.write(f"👤 {analyzer.patient_info['name']}")
-                                if 'age_gender' in analyzer.patient_info:
-                                    st.write(f"📋 {analyzer.patient_info['age_gender']}")
-
-                                # Status
-                                st.markdown("---")
-                                total_tests = (len(analyzer.amino_acids) + len(analyzer.amino_acid_ratios) +
-                                             len(analyzer.acylcarnitines) + len(analyzer.acylcarnitine_ratios))
-                                st.metric("Total Tests", total_tests)
-                                st.metric("Abnormalities", len(analyzer.abnormalities),
-                                         delta=f"-{total_tests - len(analyzer.abnormalities)}" if len(analyzer.abnormalities) == 0 else None,
-                                         delta_color="inverse")
-
-                                # Abnormalities list
-                                if len(analyzer.abnormalities) > 0:
-                                    st.markdown("**Issues:**")
-                                    for abn in analyzer.abnormalities[:5]:  # Show first 5
-                                        st.markdown(f"• {abn['analyte']}")
-                                    if len(analyzer.abnormalities) > 5:
-                                        st.markdown(f"*...and {len(analyzer.abnormalities) - 5} more*")
-                                else:
-                                    st.success("✅ All Normal")
-                else:
-                    st.info("Need at least 2 reports for comparison")
+            # Report Comparison Tool (commented out for now)
+            # if results['total'] > 1:
+            #     st.markdown("---")
+            #     st.markdown("### 🔄 Compare Reports Side-by-Side")
+            #
+            #     all_analyzers = results['abnormal_reports'] + results['normal_reports']
+            #     report_names = [f"{analyzer.relative_path} ({'⚠️ Abnormal' if len(analyzer.abnormalities) > 0 else '✅ Normal'})"
+            #                    for analyzer in all_analyzers]
+            #
+            #     if len(all_analyzers) >= 2:
+            #         st.markdown("Select 2-3 reports to compare:")
+            #
+            #         comparison_col1, comparison_col2, comparison_col3 = st.columns(3)
+            #
+            #         with comparison_col1:
+            #             report1_idx = st.selectbox("Report 1", range(len(report_names)), format_func=lambda x: report_names[x], key="compare_1")
+            #
+            #         with comparison_col2:
+            #             available_for_2 = [i for i in range(len(report_names)) if i != report1_idx]
+            #             report2_idx = st.selectbox("Report 2", available_for_2, format_func=lambda x: report_names[x], key="compare_2")
+            #
+            #         with comparison_col3:
+            #             available_for_3 = [i for i in range(len(report_names)) if i not in [report1_idx, report2_idx]]
+            #             if available_for_3:
+            #                 report3_idx = st.selectbox("Report 3 (Optional)", [None] + available_for_3,
+            #                                           format_func=lambda x: "None" if x is None else report_names[x], key="compare_3")
+            #             else:
+            #                 report3_idx = None
+            #
+            #         if st.button("📊 Compare Selected Reports", use_container_width=True):
+            #             st.markdown("#### Comparison Results")
+            #
+            #             selected_analyzers = [all_analyzers[report1_idx], all_analyzers[report2_idx]]
+            #             if report3_idx is not None:
+            #                 selected_analyzers.append(all_analyzers[report3_idx])
+            #
+            #             # Create comparison table
+            #             cols = st.columns(len(selected_analyzers))
+            #
+            #             for idx, analyzer in enumerate(selected_analyzers):
+            #                 with cols[idx]:
+            #                     st.markdown(f"**{analyzer.relative_path}**")
+            #
+            #                     # Patient info
+            #                     st.markdown("---")
+            #                     if 'name' in analyzer.patient_info:
+            #                         st.write(f"👤 {analyzer.patient_info['name']}")
+            #                     if 'age_gender' in analyzer.patient_info:
+            #                         st.write(f"📋 {analyzer.patient_info['age_gender']}")
+            #
+            #                     # Status
+            #                     st.markdown("---")
+            #                     total_tests = (len(analyzer.amino_acids) + len(analyzer.amino_acid_ratios) +
+            #                                  len(analyzer.acylcarnitines) + len(analyzer.acylcarnitine_ratios))
+            #                     st.metric("Total Tests", total_tests)
+            #                     st.metric("Abnormalities", len(analyzer.abnormalities),
+            #                              delta=f"-{total_tests - len(analyzer.abnormalities)}" if len(analyzer.abnormalities) == 0 else None,
+            #                              delta_color="inverse")
+            #
+            #                     # Abnormalities list
+            #                     if len(analyzer.abnormalities) > 0:
+            #                         st.markdown("**Issues:**")
+            #                         for abn in analyzer.abnormalities[:5]:  # Show first 5
+            #                             st.markdown(f"• {abn['analyte']}")
+            #                         if len(analyzer.abnormalities) > 5:
+            #                             st.markdown(f"*...and {len(analyzer.abnormalities) - 5} more*")
+            #                     else:
+            #                         st.success("✅ All Normal")
+            #     else:
+            #         st.info("Need at least 2 reports for comparison")
 
             # Cleanup temp directory if it was a ZIP
             if results.get('temp_dir') and Path(results['temp_dir']).exists():
